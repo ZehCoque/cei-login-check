@@ -31,21 +31,28 @@ module.exports.handler = async (event, context, callback) => {
   }
 
   const values = percents.map(p => body.totalWalletValue * p / 100);
-  
-  const date = moment(body.purchaseDate, 'DD/MM/YYYY');
 
-  if (!date.isValid) {
+  const dates = body.purchaseDate.split(',').map(d => moment(body.purchaseDate, 'DD/MM/YYYY'));
+
+  if (!dates.every(d => d.isValid())) {
     return callback(null, {
       statusCode: 500,
       body: 'Data inválida.',
     });
   }
 
+  if (![dates.length, values.length, percents.length, tickers.length].every(l => l === dates.length)) {
+    return callback(null, {
+      statusCode: 500,
+      body: 'Dados inseridos são inválidos. Todos as propriedades devem ter a mesma quantidade de parâmetros',
+    });
+  }
+
   const promiseArray = [];
-  const queryOptions = { period1: date.format('YYYY-MM-DD')};
+  const queryOptions = dates.map(d => ({ period1: d.format('YYYY-MM-DD')}));
 
   tickers.forEach((ticker, idx) => {
-    promiseArray.push(getTickersAndPurchase(ticker, queryOptions, values[idx]));
+    promiseArray.push(getTickersAndPurchase(ticker, queryOptions[idx], values[idx]));
   });
 
   const response = await Promise.all(promiseArray);
