@@ -44,7 +44,7 @@ module.exports.handler = async (event, context, callback) => {
   if (![dates.length, values.length, percents.length, tickers.length].every(l => l === dates.length)) {
     return callback(null, {
       statusCode: 500,
-      body: 'Dados inseridos são inválidos. Todos as propriedades devem ter a mesma quantidade de parâmetros',
+      body: 'Dados inseridos são inválidos. Todos as propriedades devem ter a mesma quantidade de parâmetros.',
     });
   }
 
@@ -83,7 +83,7 @@ function getTickersAndPurchase(ticker, queryOptions, value) {
     const response = {
       ticker: ticker,
       purchasedAmount: purchasedAmount,
-      purchaseValue: purchaseValue,
+      purchaseValue: purchaseValue.toFixed(2),
       simulatedValues,
     }
 
