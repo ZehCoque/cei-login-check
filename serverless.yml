@@ -1,0 +1,39 @@
+service: finance-backtest
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: sa-east-1
+  lambdaHashingVersion: 20201221
+  profile: serverless-admin
+  stage: dev
+  timeout: 20
+  environment:
+    SESSION_NAME: ${self:service}-${opt:stage, self:provider.stage}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - events:DescribeRule
+        - events:EnableRule
+        - events:PutRule
+        - events:ListRules
+        - events:DisableRule
+        - events:PutTargets
+      Resource: "*"
+    - Effect: Allow
+      Action: 
+        - lambda:InvokeAsync
+        - lambda:InvokeFunction
+      Resource: "*"
+
+functions:
+  backtest:
+    timeout: 10
+    memorySize: 512
+    handler: src/backtester.handler
+    events:
+    - http:
+        path: backtest
+        method: post
+        cors: true
