@@ -1,4 +1,4 @@
-service: finance-backtest
+service: stockmania
 
 provider:
   name: aws
@@ -11,29 +11,13 @@ provider:
   environment:
     SESSION_NAME: ${self:service}-${opt:stage, self:provider.stage}
 
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - events:DescribeRule
-        - events:EnableRule
-        - events:PutRule
-        - events:ListRules
-        - events:DisableRule
-        - events:PutTargets
-      Resource: "*"
-    - Effect: Allow
-      Action: 
-        - lambda:InvokeAsync
-        - lambda:InvokeFunction
-      Resource: "*"
-
 functions:
-  backtest:
+  login-check:
     timeout: 10
-    memorySize: 512
-    handler: src/backtester.handler
+    memorySize: 128
+    handler: src/login-check.handler
     events:
     - http:
-        path: backtest
+        path: login-check
         method: post
         cors: true

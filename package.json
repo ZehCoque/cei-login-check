@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "moment": "^2.29.1",
-    "yahoo-finance2": "^1.14.4"
+    "cei-crawler": "^2.5.0"
   }
 }
