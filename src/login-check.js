@@ -1,8 +1,13 @@
 const CeiCrawler = require('cei-crawler');
 
+const headers = {
+  "Access-Control-Allow-Headers" : "Content-Type",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "OPTIONS,POST"
+};
+
 module.exports.handler = async (event, context, callback) => {
 
-  console.log(event)
   const body = JSON.parse(event.body);
 
   const username = body.username;
@@ -15,13 +20,16 @@ module.exports.handler = async (event, context, callback) => {
 
     return callback(null, {
       statusCode: 200,
-      body: 'Password correct',
+      headers,
+      body: JSON.stringify({message: 'Password correct'}),
     });
   })
-  .catch(() => {
+  .catch((err) => {
+    console.log(err)
     return callback(null, {
-      statusCode: 401,
-      body: 'Password incorrect',
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({message: 'Password incorrect'}),
     });
   });
 
